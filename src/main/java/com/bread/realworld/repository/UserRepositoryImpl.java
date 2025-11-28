@@ -34,4 +34,14 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
                         .fetchOne()
         ).isPresent();
     }
+
+    @Override
+    public Optional<User> findByUsername(final String username) {
+        return Optional.ofNullable(
+                from(user)
+                        .where(user.username.username.eq(username))
+                        .fetchOne()
+        );
+    }
+
 }

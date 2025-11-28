@@ -27,8 +27,11 @@ public class User {
     @Embedded
     private Password password;
 
-    private String bio;
-    private String image;
+    @Embedded
+    private Bio bio;
+
+    @Embedded
+    private Image image;
 
     protected User() {
     }
@@ -41,7 +44,7 @@ public class User {
 
     @Builder
     private User(final Long id, final Username username, final Email email, final Password password,
-                 final String bio, final String image) {
+                 final Bio bio, final Image image) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -52,5 +55,25 @@ public class User {
 
     public static User register(final String username, final String email, final String password) {
         return new User(new Username(username), new Email(email), new Password(password));
+    }
+
+    public String getUserName() {
+        return username.getUsername();
+    }
+
+    public String getEmail() {
+        return email.getEmail();
+    }
+
+    public String getEncodedPassword() {
+        return password.getEncodedPassword();
+    }
+
+    public String getBio() {
+        return bio != null ? bio.getBio() : null;
+    }
+
+    public String getImage() {
+        return image != null ? image.getImage() : null;
     }
 }
