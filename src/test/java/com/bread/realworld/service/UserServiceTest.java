@@ -9,14 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.bread.realworld.fixtures.Fixtures.aEmail;
-import static com.bread.realworld.fixtures.Fixtures.aPassword;
 import static com.bread.realworld.fixtures.Fixtures.aRegisterUser;
 import static com.bread.realworld.fixtures.Fixtures.aUser;
-import static com.bread.realworld.fixtures.Fixtures.aUsername;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -56,14 +54,14 @@ class UserServiceTest {
 
         userService.register(registerUser);
 
-        verify(passwordEncoder).encode(aPassword().getEncodedPassword());
+        verify(passwordEncoder).encode(registerUser.password());
     }
 
     @Test
     void when_register_with_duplicate_email_expect_exception_thrown() {
         var registerUser = aRegisterUser();
 
-        given(userRepository.existsByEmail(aEmail())).willReturn(true);
+        given(userRepository.existsByEmail(registerUser.email())).willReturn(true);
 
         assertThatThrownBy(() -> userService.register(registerUser))
                 .isInstanceOf(DuplicateEmailException.class);
@@ -73,10 +71,12 @@ class UserServiceTest {
     void when_register_with_duplicate_username_expect_exception_thrown() {
         var registerUser = aRegisterUser();
 
-        given(userRepository.existsByEmail(aEmail())).willReturn(false);
-        given(userRepository.existsByUsername(aUsername())).willReturn(true);
+        given(userRepository.existsByEmail(registerUser.email())).willReturn(false);
+        given(userRepository.existsByUsername(registerUser.username())).willReturn(true);
 
         assertThatThrownBy(() -> userService.register(registerUser))
                 .isInstanceOf(DuplicateUsernameException.class);
     }
 }
+
+

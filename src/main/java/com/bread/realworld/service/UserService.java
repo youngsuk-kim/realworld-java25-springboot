@@ -1,8 +1,6 @@
 package com.bread.realworld.service;
 
-import com.bread.realworld.domain.Email;
 import com.bread.realworld.domain.User;
-import com.bread.realworld.domain.Username;
 import com.bread.realworld.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,8 +16,8 @@ public class UserService {
 
     @Transactional
     public User register(final UserRegistration userRegistration) {
-        validateEmailNotExists(new Email(userRegistration.email()));
-        validateUsernameNotExists(new Username(userRegistration.username()));
+        validateEmailNotExists(userRegistration.email());
+        validateUsernameNotExists(userRegistration.username());
 
         final String encodedPassword = passwordEncoder.encode(userRegistration.password());
         final User user = User.register(userRegistration.username(), userRegistration.email(), encodedPassword);
@@ -27,13 +25,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    private void validateEmailNotExists(final Email email) {
+    private void validateEmailNotExists(final String email) {
         if (userRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
-    private void validateUsernameNotExists(final Username username) {
+    private void validateUsernameNotExists(final String username) {
         if (userRepository.existsByUsername(username)) {
             throw new DuplicateUsernameException();
         }
